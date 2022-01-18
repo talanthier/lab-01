@@ -20,7 +20,7 @@ Today's data comes from the [Metropolitan Transportation Commission (MTC) Open D
 In this lab, we will focus on data about the existing and planned segments of the San Francisco Bay trail. The data is located in the *SFO_trails.csv* file located in the *data* folder. Use the code below to read in the .csv file and save it in the RStudio environment as a data frame called `trails`.
 
 ```{r read-data, eval=FALSE}
-trails <- read_csv("data/SFO-trails.csv")
+trails <- read_csv("SFO-trails.csv")
 ```
 
 A full list of the variables in the dataset is available  [here](https://opendata.mtc.ca.gov/datasets/MTC::san-francisco-bay-trail/about). For today's analysis, we will primarily focus on the following variables: 
@@ -47,7 +47,7 @@ View(trails)
 1. Now that we've had a quick view of the dataset, let's get more details about its structure. Sometimes viewing a summary of the data structure is more useful than viewing the raw data, especially if the dataset has a large number of observations and/or rows. Run the code below to use the `glimpse` function to see a summary of the `trails` dataset.
 
     How many observations are in the `trails` dataset? How many variables?
-
+    We have 739 observations and 12 variables.
   
 ```{r eval = F}
 glimpse(trails)
@@ -57,31 +57,31 @@ glimpse(trails)
 2. Before conducting statistical inference (or eventually fitting regression models),  we need do some exploratory data analysis (EDA). Much of EDA consists of visualizing the data but it also includes calculating summary statistics for the variables in our dataset. Let's begin by examining the distribution of `status` with a data visualization and summary statistics. 
 
     - What is a type of graph that's appropriate to visualize the distribution of `status`? Fill in the `ggplot` code below to plot the distribution of `status`. Include informative axis labels and title on the graph.
-    
+    `status` is categorical and appears to take only the values `;`Proposed` and `Existing`. Thus we should use a bar graph so we can see how many segments of the trail are proposed or already built.
     - Then, calculate the proportion of observations in each category of `status` by completing the code below.
-
+    
 ```{r eval=FALSE}
 ggplot(data = trails, aes(x = status)) + 
-  __________ + 
-  labs(x = "_________", 
-       y = "_________", 
-       title = "__________")
+  geom_bar() + 
+  labs(x = "Status", 
+       y = "Number of Segments", 
+       title = "Number of Trail Segments by Status")
 ```
 
 
 
 ```{r eval = FALSE}
 trails %>%
-  count(_____) %>%
+  count(status) %>%
   mutate(proportion = n / sum(n))
 ```
 
 3. Since we want to analyze characteristics for trails in the Bay Area, we will just use data from currently existing trails for the remainder of the analysis. Complete the code below to use the `filter` function to create a subset consisting only of trails that currently exist and have a value reported for `length`. Assign the subset the name `current_trails`. (*Hint: There should be 493 observations in current_trails.*)
 
 ```{r eval = F}
-__________ <- trails %>%
-  filter(status == "______", !is.na(______))
-````
+current_trails <- trails %>%
+  filter(status == "Existing", !is.na(status))
+```
 
 
 *This is a good place to knit, commit, and push changes to your remote lab-01 repo on GitHub. Be sure to write an informative commit message (e.g. "Completed exercises 1 - 3"), and push every file to GitHub by clicking the checkbox next to each file in the Git pane. After you push the changes, the Git pane in RStudio should be empty."*
@@ -94,10 +94,16 @@ __________ <- trails %>%
 
 ```{r eval = F}
 ggplot(data = current_trails) +
-  geom_histogram(mapping = aes(x = _____), binwidth = 0.5)
+  geom_histogram(mapping = aes(x = length), binwidth = 0.5) +
+  labs(x = 'Length',
+       y = 'Count',
+       title = 'Histogram of Trail Lengths')
 
-ggplot(data = current_trails, mapping = aes(x = as.factor(class), y = _____)) +
-  geom_boxplot()
+ggplot(data = current_trails, mapping = aes(x = as.factor(class), y = length)) +
+  geom_boxplot() +
+  labs(x = "Class", 
+       y = "Length", 
+       title = "Trail Length by Class")
 ```
 
 See [Section 7.3.1 "Visualizing Distributions"](https://r4ds.had.co.nz/exploratory-data-analysis.html#introduction-3) or the [ggplot2 reference page](https://ggplot2.tidyverse.org/reference/index.html) for details and example code.
@@ -106,23 +112,30 @@ See [Section 7.3.1 "Visualizing Distributions"](https://r4ds.had.co.nz/explorato
 
 ```{r eval = FALSE}
 current_trails %>%
-  summarise(min = __________, 
-            q1 = __________, 
-            median = __________, 
-            q3 = __________, 
-            max = __________, 
-            iqr = __________, 
-            mean = __________, 
-            std_dev = __________
+  summarise(min = min(length), 
+            q1 = quantile(length, probs = 0.25), 
+            median = median(length), 
+            q3 = quantile(length, probs = 0.75), 
+            max = max(length), 
+            iqr = IQR(length), 
+            mean = mean(length), 
+            std_dev = sd(length)
             )
 ```
 
 6. Describe the distribution of `length`. Your description should include comments about the shape, center, spread, and any potential outliers. Use the graph from Exercise 4 and relevant summary statistics from Exercise 5 in your description.
+`length` appears to be positively skewed. This is suggested by the fact that our mean lies far above the mean. We can verify this by looking at the histogram we constructed earlier. Also, our third quartile is 0.93 but the maximum length is 8.64 which is quite a larger range comparing it to our iqr of 0.72. This suggests we have a few outliers shown in the long right tail in our histogram.
+
 
 7. We want to limit the analysis to trails that are more likely intended for day hikes, rather than multi-day hikes and camping. Therefore, let's remove the extreme outliers from the data for this analysis and only consider those trails that are 5 miles or shorter. 
 
     Filter the dataset to remove the extreme outliers. **Be sure to save the updated dataset, so you can use it for the remainder of the lab.** 
-    
+
+```{r eval = FALSE}
+short_current_trails <- current_trails %>%
+  filter(length <= 5)
+```
+
 *This is a good place to knit, commit, and push changes to your remote lab-01 repo on GitHub. Be sure to write informative commit message (e.g. "Completed exercises 4 - 7"), and push every file to GitHub by clicking the checkbox next to each file in the Git pane. After you push the changes, the Git pane in RStudio should be empty."*
 
 8. Consider the distribution of `class`. 
