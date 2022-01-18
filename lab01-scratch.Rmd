@@ -142,7 +142,7 @@ short_current_trails <- current_trails %>%
     - What are the values of `class` in the dataset? Show the code and output to support your answer. 
     - What do you think is the most likely reason for the missing observations of `class`? In other words, what does a missing value of `class` indicate? 
     
-  Class appears to take the values 1,2, and 3, but we do have one missing observation in our filtered dataset. Looking at the description of the dataset from the MTC Open Data Catalog, they do not have anything indicating what the class variable means. Taking a guess, class could possibly indicate the quality of the trail (1 being low quality, 3 being high quality). It could also indicate something like how much traffic that segment of trail gets. If we were to interpret `class` this way, a missing value may indicate that they have yet to asses the quality of the trail segment or have not observed how much traffic the trail gets yet.
+  Class appears to take the values 1,2, and 3, but we do have one missing observation in our dataset. Looking at the description of the dataset from the MTC Open Data Catalog, they do not have anything indicating what the class variable means. Taking a guess, the class variable could indicate what type of trail it is. For example, is it a bike path, a fire road, or a walking path. A missing observation could mean that the city in which the trail segment is in has yet to classify that segment. It is also possible that the trail segment doesn't fit into one of the 3 categories that class takes. For example, it is possible that the segment is just a regular road and doesn't fit into the categories of bike path, fire road, or walking path.
     
 ```{r eval=FALSE}
 short_current_trails %>% 
@@ -154,13 +154,37 @@ short_current_trails %>%
 Since the most of the data has `class` = 1, we will impute our missing class observations with class = 1
 
 ```{r eval=FALSE}
-trails_filtered <- short_current_trails %>% filter(class !=3) %>% 
-  mutate(class = if_else(is.na(class),1,class)) 
-trails_filtered %>% 
+no_class_3_trails <- short_current_trails %>% filter(class !=3) %>% 
+  mutate(class = if_else(is.na(class),1 ,class)) 
+no_class_3_trails %>% 
   count(class)
+
+short_current_trails_imputed <- short_current_trails %>% mutate(class = if_else(is.na(class),1 ,class)) # imputed missing values but kept class 3
+short_current_trails_imputed %>% count(class)
 ```
 
 10. Now that we've completed the univariate EDA (i.e. examining one variable at a time), let's examine the relationship between the length of the trail and its class variable. Make a graph to visualize the relationship between `length` and `class` and calculate the appropriate summary statistics. Include informative axis labels and title on your graph.
+
+```{r eval=FALSE}
+ggplot(data = short_current_trails_imputed, mapping = aes(x = as.factor(class), y = length)) +
+  geom_boxplot() +
+  labs(x = "Class", 
+       y = "Length", 
+       title = "Trail Length by Class of Existing Trails less that 5 Miles")
+
+short_current_trails_imputed %>% group_by(class) %>%
+  summarise(min = min(length), 
+            q1 = quantile(length, probs = 0.25), 
+            median = median(length), 
+            q3 = quantile(length, probs = 0.75), 
+            max = max(length), 
+            iqr = IQR(length), 
+            mean = mean(length), 
+            std_dev = sd(length)
+            )
+
+```
+
 
 11. Describe the relationship between `length` and `class`. In other words, describe how the distribution of `length` compares between trails that have different classes (1 = shared use bicycle and pedestrian path, 2 = bike lane, and 3 = bike route). Include information from the graph and summary statistics from the previous exercise in your response.
 
