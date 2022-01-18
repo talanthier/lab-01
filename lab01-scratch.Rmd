@@ -141,12 +141,23 @@ short_current_trails <- current_trails %>%
 8. Consider the distribution of `class`. 
     - What are the values of `class` in the dataset? Show the code and output to support your answer. 
     - What do you think is the most likely reason for the missing observations of `class`? In other words, what does a missing value of `class` indicate? 
+    
+  Class appears to take the values 1,2, and 3, but we do have one missing observation in our filtered dataset. Looking at the description of the dataset from the MTC Open Data Catalog, they do not have anything indicating what the class variable means. Taking a guess, class could possibly indicate the quality of the trail (1 being low quality, 3 being high quality). It could also indicate something like how much traffic that segment of trail gets. If we were to interpret `class` this way, a missing value may indicate that they have yet to asses the quality of the trail segment or have not observed how much traffic the trail gets yet.
+    
+```{r eval=FALSE}
+short_current_trails %>% 
+  count(class)
+```
 
 9. Complete the code below to impute (i.e. fill in) the missing values of `class` with the appropriate value. After that, eliminate all the observations from class = 3, since we are not going to use the. Then, display the distribution of `class` to check that the missing values were correctly imputed.
 
+Since the most of the data has `class` = 1, we will impute our missing class observations with class = 1
+
 ```{r eval=FALSE}
-__________ <- __________ %>% filter(class !=3) %>% 
-  mutate(class = if_else(is.na(class),______,class)) 
+trails_filtered <- short_current_trails %>% filter(class !=3) %>% 
+  mutate(class = if_else(is.na(class),1,class)) 
+trails_filtered %>% 
+  count(class)
 ```
 
 10. Now that we've completed the univariate EDA (i.e. examining one variable at a time), let's examine the relationship between the length of the trail and its class variable. Make a graph to visualize the relationship between `length` and `class` and calculate the appropriate summary statistics. Include informative axis labels and title on your graph.
