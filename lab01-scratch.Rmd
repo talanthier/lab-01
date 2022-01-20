@@ -170,7 +170,12 @@ ggplot(data = short_current_trails_imputed, mapping = aes(x = as.factor(class), 
   geom_boxplot() +
   labs(x = "Class", 
        y = "Length", 
-       title = "Trail Length by Class of Existing Trails less that 5 Miles")
+       title = "Trail Length by Class of Existing Trails less than 5 Miles")
+
+ggplot(data = short_current_trails_imputed, mapping = aes(x = length)) +
+  geom_histogram(binwidth = 0.1) +
+  facet_grid(as.factor(class) ~ .) +
+  labs(x = 'Length', y = 'Class', title = 'Trail Length by Class of Existing Trails less than 5 Miles')
 
 short_current_trails_imputed %>% group_by(class) %>%
   summarise(min = min(length), 
@@ -187,6 +192,8 @@ short_current_trails_imputed %>% group_by(class) %>%
 
 
 11. Describe the relationship between `length` and `class`. In other words, describe how the distribution of `length` compares between trails that have different classes (1 = shared use bicycle and pedestrian path, 2 = bike lane, and 3 = bike route). Include information from the graph and summary statistics from the previous exercise in your response.
+
+Looking at the histograms of length between classes, we can immediately identify that there are very few existing trail segments that are dedicated bike routes. But looking at those bike routes, they all appear to be quite short. This is shown with the low mean and median of about 0.396 and low standard deviation of 0.282. But we have quite a few observations that are bike and pedestrian paths as well as those that are just bike lanes. Looking at our summary statistics, the bike lanes appear to be longer on average than multi-use paths. There is also less variability in the lengths of bike lanes as the length of bike lanes appears to have a standard deviation of 0.57 while that of multi-use paths is around 0.74. That being said
 
 *This is a good place to knit, commit, and push changes to your remote lab-01 repo on GitHub. Be sure to write informative commit message (e.g. "Completed exercises 8 - 11"), and push every file to GitHub by clicking the checkbox next to each file in the Git pane. After you push the changes, the Git pane in RStudio should be empty."*
 
