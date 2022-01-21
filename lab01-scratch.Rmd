@@ -1,10 +1,10 @@
 ---
-title: "Untitled"
+title: "STAT 108: Lab 1"
 author: "Timothy Lanthier"
 date: "1/17/2022"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -19,7 +19,7 @@ Today's data comes from the [Metropolitan Transportation Commission (MTC) Open D
 
 In this lab, we will focus on data about the existing and planned segments of the San Francisco Bay trail. The data is located in the *SFO_trails.csv* file located in the *data* folder. Use the code below to read in the .csv file and save it in the RStudio environment as a data frame called `trails`.
 
-```{r read-data, eval=FALSE}
+```{r read-data, eval=TRUE}
 trails <- read_csv("SFO-trails.csv")
 ```
 
@@ -60,7 +60,7 @@ glimpse(trails)
     `status` is categorical and appears to take only the values `;`Proposed` and `Existing`. Thus we should use a bar graph so we can see how many segments of the trail are proposed or already built.
     - Then, calculate the proportion of observations in each category of `status` by completing the code below.
     
-```{r eval=FALSE}
+```{r eval=TRUE}
 ggplot(data = trails, aes(x = status)) + 
   geom_bar() + 
   labs(x = "Status", 
@@ -69,8 +69,7 @@ ggplot(data = trails, aes(x = status)) +
 ```
 
 
-
-```{r eval = FALSE}
+```{r eval = TRUE}
 trails %>%
   count(status) %>%
   mutate(proportion = n / sum(n))
@@ -78,7 +77,7 @@ trails %>%
 
 3. Since we want to analyze characteristics for trails in the Bay Area, we will just use data from currently existing trails for the remainder of the analysis. Complete the code below to use the `filter` function to create a subset consisting only of trails that currently exist and have a value reported for `length`. Assign the subset the name `current_trails`. (*Hint: There should be 493 observations in current_trails.*)
 
-```{r eval = F}
+```{r eval = TRUE}
 current_trails <- trails %>%
   filter(status == "Existing", !is.na(status))
 ```
@@ -92,7 +91,7 @@ current_trails <- trails %>%
 
    Make a graph to visualize the distribution of `length`. Include an informative title and axis labels.
 
-```{r eval = F}
+```{r eval = TRUE}
 ggplot(data = current_trails) +
   geom_histogram(mapping = aes(x = length), binwidth = 0.5) +
   labs(x = 'Length',
@@ -110,7 +109,7 @@ See [Section 7.3.1 "Visualizing Distributions"](https://r4ds.had.co.nz/explorato
 
 5. Next, fill in the code below to use the `summarise` function to calculate various summary statistics for the variable `length`. You can use the [summarise reference page](https://dplyr.tidyverse.org/reference/summarise.html) for more information about the function and example code. 
 
-```{r eval = FALSE}
+```{r eval = TRUE}
 current_trails %>%
   summarise(min = min(length), 
             q1 = quantile(length, probs = 0.25), 
@@ -131,7 +130,7 @@ current_trails %>%
 
     Filter the dataset to remove the extreme outliers. **Be sure to save the updated dataset, so you can use it for the remainder of the lab.** 
 
-```{r eval = FALSE}
+```{r eval = TRUE}
 short_current_trails <- current_trails %>%
   filter(length <= 5)
 ```
@@ -144,7 +143,7 @@ short_current_trails <- current_trails %>%
     
   Class appears to take the values 1,2, and 3, but we do have one missing observation in our dataset. Looking at the description of the dataset from the MTC Open Data Catalog, they do not have anything indicating what the class variable means. Taking a guess, the class variable could indicate what type of trail it is. For example, is it a bike path, a fire road, or a walking path. A missing observation could mean that the city in which the trail segment is in has yet to classify that segment. It is also possible that the trail segment doesn't fit into one of the 3 categories that class takes. For example, it is possible that the segment is just a regular road and doesn't fit into the categories of bike path, fire road, or walking path.
     
-```{r eval=FALSE}
+```{r eval=TRUE}
 short_current_trails %>% 
   count(class)
 ```
@@ -153,7 +152,7 @@ short_current_trails %>%
 
 Since the most of the data has `class` = 1, we will impute our missing class observations with class = 1
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 no_class_3_trails <- short_current_trails %>% filter(class !=3) %>% 
   mutate(class = if_else(is.na(class),1 ,class)) 
 no_class_3_trails %>% 
@@ -165,7 +164,7 @@ short_current_trails_imputed %>% count(class)
 
 10. Now that we've completed the univariate EDA (i.e. examining one variable at a time), let's examine the relationship between the length of the trail and its class variable. Make a graph to visualize the relationship between `length` and `class` and calculate the appropriate summary statistics. Include informative axis labels and title on your graph.
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 ggplot(data = short_current_trails_imputed, mapping = aes(x = as.factor(class), y = length)) +
   geom_boxplot() +
   labs(x = "Class", 
@@ -193,7 +192,7 @@ short_current_trails_imputed %>% group_by(class) %>%
 
 11. Describe the relationship between `length` and `class`. In other words, describe how the distribution of `length` compares between trails that have different classes (1 = shared use bicycle and pedestrian path, 2 = bike lane, and 3 = bike route). Include information from the graph and summary statistics from the previous exercise in your response.
 
-Looking at the histograms of length between classes, we can immediately identify that there are very few existing trail segments that are dedicated bike routes. But looking at those bike routes, they all appear to be quite short. This is shown with the low mean and median of about 0.396 and low standard deviation of 0.282. But we have quite a few observations that are bike and pedestrian paths as well as those that are just bike lanes. Looking at our summary statistics, the bike lanes appear to be longer on average than multi-use paths. There is also less variability in the lengths of bike lanes as the length of bike lanes appears to have a standard deviation of 0.57 while that of multi-use paths is around 0.74. That being said
+Looking at the histograms of length between classes, we can immediately identify that there are very few existing trail segments that are dedicated bike routes. But looking at those bike routes, they all appear to be quite short. This is shown with the low mean and median of about 0.396 and low standard deviation of 0.282. But we have quite a few observations that are bike and pedestrian paths as well as those that are just bike lanes. Looking at our summary statistics, the bike lanes appear to be longer on average than multi-use paths. There is also less variability in the lengths of bike lanes as the length of bike lanes appears to have a standard deviation of 0.57 while that of multi-use paths is around 0.74. That being said, looking at the histogram, the length of multi-use paths is positively skewed and has a long right tail. So while on average multi-use paths are shorter, the longest multi-use paths are longer than the longest bike lanes.
 
 *This is a good place to knit, commit, and push changes to your remote lab-01 repo on GitHub. Be sure to write informative commit message (e.g. "Completed exercises 8 - 11"), and push every file to GitHub by clicking the checkbox next to each file in the Git pane. After you push the changes, the Git pane in RStudio should be empty."*
 
@@ -208,6 +207,12 @@ Over the next few questions, will use statistical inference to assess whether th
     - **Independence**
     - **Sample Size**
     - **Independent Groups**
+    
+Independence doesn't seem to be met. We are trying to make conclusions about trails in urban areas in all of California, but we only have segments of the Bay Trail. Considering that most of the segments of the Bay Trail are connected to one another, the length of one segment may not be independent of the length of adjacent segments. 
+
+I believe the sample size condition is met. In our filtered dataset, we have 487 observations which seems to be quite large. That being said, I don't know how many trail segments are in our population so it is possible that this quantity is extremely small relative to all trails in urban areas in California.
+
+Since the independence assumption is not satisfied, we cannot say we have two independent groups. With the bay trail consisting of connected bike paths and multi-use trails, the length of bike lanes may be associated with the length of adjacent multi-use trail segments. 
 
 13. While we have observed a small difference in the mean length in trails with bike lanes (class = 2) and trials that share bikes with pedestrians (class = 1), let's assess if there is enough evidence to consider the difference "statistically significant" or if it appears to be due to random chance. 
 
@@ -216,12 +221,13 @@ The null and alternative hypotheses are written in statistical notation below. S
 $$H_0: \mu_1 - \mu_2 = 0 \\
 H_a: \mu_1 - \mu_2 \neq 0$$
 
+Our null hypothesis $H_0$ is that there is no difference between the true mean length of all trails that share bikes with pedestrians and the true mean length of bike paths. Our alternative hypothesis $H_a$ is that the mean length of all multi-use trails is not equal to the mean length of all bike paths.
+
 14. Fill in the code below to use the `t.test` function to calculate the test statistic and p-value. Replace `response` with the variable we're interested in drawing conclusions about and `group_var` with the variable used to define the two groups.
 
-```{r eval = FALSE}
-?t.test # to see the help page from the function
-t.test(response ~ group_var, data = ________, 
-       alternative = "___________", 
+```{r eval = TRUE}
+t.test(length ~ class, data = no_class_3_trails, 
+       alternative = "two.sided", 
        conf.level = 0.99) #less, greater, or two.sided
 ```
 
@@ -229,8 +235,16 @@ t.test(response ~ group_var, data = ________,
     - Write the definition of the test statistic in the context of this analysis.
     - Write the definition of the p-value in the context of this analysis. 
     - State your conclusion in the context of this analysis. Use a significance level of $\alpha = 0.01$. 
+    
+  Since we're comparing the difference of two means, we have the null hypothesis that the true mean length of bike paths is the same as the true mean length of multi-use trails. We have the alternative hypothesis that these 2 true means are not equal. The test statistic is the number of standard errors the difference of our two observed sample means is from our hypothesized value for the difference of the two populations. So our test statistic of $t=-0.699$ is indicating that our difference of observed means lies 0.699 standard errors below the hypothesized value $\mu_1-\mu_2 = 0$.
+
+Now assuming that $\mu_1 - \mu_2 = 0$, our p-value is the chance that if we take a random sample of the same size from the population that we get an observed difference of means that is at or farther away from the difference of means we observed in our sample. In our output, we have a p-value of 0.4852. So if we were to get another random sample of the same size from the population of California urban paths, the chance that the difference of means in this new sample is more extreme (farther away from 0) than the sample we have been studying is 0.4852.
+
+Since we have a very large p-value of 0.4852, then it is quite likely that the observed difference of means being nonzero is due to chance. Hence we do not have enough evidence to reject the hypothesis that there is no difference between the mean length of bike paths and the mean length of shared trails.
 
 16. Notice the confidence interval for the difference in mean trail length printed in the output from Exercise 14. Interpret this confidence interval in the context of this analysis. 
+
+We also have a confidence interval for $\mu_1 - \mu_2$ of approximately (-0.243,0.141). Thus we are 99% confident that the true population mean $\mu_1 - \mu_2$ lies within this interval. Since the interval contains $0$, then the difference in means is not statistically significant. Hence we do not have enough evidence to claim that the difference in mean bike path length and mean shared trail length is nonzero.
 
 *You're done and ready to submit your work! Knit, commit, and push all remaining changes. You can use the commit message "Done with Lab 1!", and make sure you have pushed all the files to GitHub (your Git pane in RStudio should be empty) and that<u>all</u> documents are updated in your repo on GitHub. Then submit the pdf for your assignment on Gradescope. Include your repo name, so I can check your commits.*
 
