@@ -3,8 +3,8 @@ title: "STAT 108: Lab 1"
 author: "Timothy Lanthier"
 date: "1/17/2022"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -246,6 +246,6 @@ Since we have a p-value of 0.4852 greater than the significance level of $\alpha
 
 We also have a confidence interval for $\mu_1 - \mu_2$ of approximately (-0.243,0.141). Thus we are 99% confident that the true population mean $\mu_1 - \mu_2$ lies within this interval. This means that if we were to take many other random samples from the population of California trails, 99% of the time, the confidence interval constructed by this hypothetical sample would capture the true population difference of means. Since the interval contains $0$, then the difference in means is not statistically significant. Hence we do not have enough evidence to claim that the difference in mean bike path length and mean shared trail length is nonzero.
 
-*You're done and ready to submit your work! Knit, commit, and push all remaining changes. You can use the commit message "Done with Lab 1!", and make sure you have pushed all the files to GitHub (your Git pane in RStudio should be empty) and that<u>all</u> documents are updated in your repo on GitHub. Then submit the pdf for your assignment on Gradescope. Include your repo name, so I can check your commits.*
+Github: talanthier/lab-01
 
 
